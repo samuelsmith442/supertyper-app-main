@@ -114,7 +114,7 @@ export default function Home() {
 
         <div className="relative w-full max-w-md aspect-square">
           <Image
-            src="/images/cat-mascot.svg"
+            src="/images/updated-cat-mascot.png.png"
             alt="SuperType Cat Mascot - A friendly cat ready to help you improve your typing"
             fill
             className="object-contain"

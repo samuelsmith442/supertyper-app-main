@@ -62,9 +62,9 @@ export function CatMascot({ isTyping = false, hasCompleted = false }: CatMascotP
   }, [isTyping, hasCompleted])
 
   const getCatImage = () => {
-    if (hasCompleted) return "/images/cat-celebrating.svg"
-    if (isTyping) return "/images/cat-typing.svg"
-    return "/images/cat-mascot.svg"
+    if (hasCompleted) return "/images/cat-celebrating.png"
+    if (isTyping) return "/images/cat-typing.png"
+    return "/images/updated-cat-mascot.png.png"
   }
 
   const getCatAlt = () => {
