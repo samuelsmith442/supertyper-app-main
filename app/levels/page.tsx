@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { ArrowLeft, Lock, Trophy, Clock, Star, Zap, Target, Flame } from "lucide-react"
-import { getUserProfile, type UserProfile } from "@/lib/user-storage"
+import { getUserProfile, resetUserProfile, type UserProfile } from "@/lib/user-storage"
 
 const levels = [
   {
@@ -125,6 +125,30 @@ export default function LevelsPage() {
           <div className="mt-2 text-sm text-muted-foreground">
             Current Level: {userProfile.level} • Total XP: {userProfile.totalXP}
           </div>
+          <div className="mt-2 p-3 bg-muted/50 rounded-md text-sm">
+            <p className="font-medium">Level Progression</p>
+            <p className="text-muted-foreground mt-1">Your profile level increases as you earn XP. Challenge levels unlock at specific profile levels:</p>
+            <ul className="text-muted-foreground mt-1 list-disc list-inside">
+              <li>Level 2: Unlock at profile level 2</li>
+              <li>Level 3: Unlock at profile level 4</li>
+              <li>Level 4: Unlock at profile level 7</li>
+              <li>Level 5: Unlock at profile level 10</li>
+              <li>Level 6 (Expert): Unlock at profile level 15</li>
+            </ul>
+            <div className="mt-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => {
+                  const resetProfile = resetUserProfile();
+                  setUserProfile(resetProfile);
+                  alert('Profile reset! Refresh the page to see changes.');
+                }}
+              >
+                Reset Profile Data
+              </Button>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -178,7 +202,10 @@ export default function LevelsPage() {
                   ) : (
                     <Button disabled className="w-full">
                       <Lock className="h-4 w-4 mr-2" />
-                      Reach Level {Math.ceil(level.id * 1.5)} to Unlock
+                      Reach Profile Level {level.id === 2 ? 2 : 
+                                           level.id === 3 ? 4 : 
+                                           level.id === 4 ? 7 : 
+                                           level.id === 5 ? 10 : 15} to Unlock
                     </Button>
                   )}
                 </CardFooter>

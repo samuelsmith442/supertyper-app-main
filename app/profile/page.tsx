@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import {
   Dialog,
   DialogContent,
@@ -194,6 +195,64 @@ export default function ProfilePage() {
               </div>
             </div>
           </CardHeader>
+        </Card>
+
+        {/* Sound Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              🔊 Sound Settings
+            </CardTitle>
+            <CardDescription>Configure typing sound effects</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="sound-enabled">Enable Sound Effects</Label>
+                <p className="text-sm text-muted-foreground">
+                  Play sounds while typing for better feedback
+                </p>
+              </div>
+              <Switch
+                id="sound-enabled"
+                checked={userProfile.soundSettings.enabled}
+                onCheckedChange={(checked) => {
+                  const updatedProfile = updateUserProfile({
+                    soundSettings: {
+                      ...userProfile.soundSettings,
+                      enabled: checked
+                    }
+                  })
+                  setUserProfile(updatedProfile)
+                }}
+              />
+            </div>
+            
+            {userProfile.soundSettings.enabled && (
+              <div className="mt-4 space-y-2">
+                <Label htmlFor="sound-volume">Volume: {Math.round(userProfile.soundSettings.volume * 100)}%</Label>
+                <input
+                  id="sound-volume"
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={userProfile.soundSettings.volume}
+                  onChange={(e) => {
+                    const volume = parseFloat(e.target.value)
+                    const updatedProfile = updateUserProfile({
+                      soundSettings: {
+                        ...userProfile.soundSettings,
+                        volume
+                      }
+                    })
+                    setUserProfile(updatedProfile)
+                  }}
+                  className="w-full"
+                />
+              </div>
+            )}
+          </CardContent>
         </Card>
 
         {/* Stats Grid */}

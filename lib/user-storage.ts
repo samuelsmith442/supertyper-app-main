@@ -16,6 +16,10 @@ export interface UserProfile {
   testHistory: TestResult[]
   createdAt: string
   lastActive: string
+  soundSettings: {
+    enabled: boolean
+    volume: number
+  }
 }
 
 export interface TestResult {
@@ -49,6 +53,10 @@ export const defaultProfile: UserProfile = {
   testHistory: [],
   createdAt: new Date().toISOString(),
   lastActive: new Date().toISOString(),
+  soundSettings: {
+    enabled: true,
+    volume: 0.3
+  },
 }
 
 export const getUserProfile = (): UserProfile => {
@@ -154,16 +162,18 @@ export const addTestResult = (testResult: Omit<TestResult, "id" | "completedAt">
 }
 
 const getXPRequiredForLevel = (level: number): number => {
-  return level * 100 + (level - 1) * 50 // Exponential XP requirements
+  // More challenging XP requirements with steeper progression
+  return level * 150 + Math.pow(level - 1, 2) * 25 // Exponential XP requirements
 }
 
 const getUnlockedLevels = (currentLevel: number): number[] => {
   const levels = [1]
-  if (currentLevel >= 2) levels.push(2)
-  if (currentLevel >= 3) levels.push(3)
-  if (currentLevel >= 5) levels.push(4)
-  if (currentLevel >= 8) levels.push(5)
-  if (currentLevel >= 12) levels.push(6)
+  // More challenging level unlock requirements
+  if (currentLevel >= 2) levels.push(2) // Unlock level 2 at profile level 2
+  if (currentLevel >= 4) levels.push(3) // Unlock level 3 at profile level 4
+  if (currentLevel >= 7) levels.push(4) // Unlock level 4 at profile level 7
+  if (currentLevel >= 10) levels.push(5) // Unlock level 5 at profile level 10
+  if (currentLevel >= 15) levels.push(6) // Unlock level 6 (Expert) at profile level 15
   return levels
 }
 

@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Timer, RotateCcw } from "lucide-react"
-import { addTestResult } from "@/lib/user-storage"
+import { addTestResult, getUserProfile } from "@/lib/user-storage"
 import { SmartTextSelector } from "@/components/smart-text-selector"
 import { trackTypingErrors, storeTypingErrors } from "@/lib/smart-text-generator"
+import { useSounds } from "@/lib/use-sound"
 
 const levelTexts = {
   1: [
@@ -62,6 +63,13 @@ export function TypingTest({ onStateChange, level = 1, onTestComplete }: TypingT
   const [hasCompleted, setHasCompleted] = useState(false)
   const [xpEarned, setXpEarned] = useState<number | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  
+  // Add sound functionality
+  const { initializeSounds, playSound } = useSounds()
+  const [soundSettings, setSoundSettings] = useState(() => {
+    const profile = getUserProfile()
+    return profile.soundSettings
+  })
 
   // Set time limit based on level
   const getTimeLimit = (level: number) => {
@@ -72,6 +80,11 @@ export function TypingTest({ onStateChange, level = 1, onTestComplete }: TypingT
   useEffect(() => {
     onStateChange?.(isActive, hasCompleted)
   }, [isActive, hasCompleted, onStateChange])
+  
+  // Initialize sounds
+  useEffect(() => {
+    initializeSounds()
+  }, [initializeSounds])
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null
@@ -122,6 +135,7 @@ export function TypingTest({ onStateChange, level = 1, onTestComplete }: TypingT
     setIsActive(false)
     setEndTime(Date.now())
     setHasCompleted(true)
+    playSound('complete', soundSettings)
 
     if (startTime) {
       const timeSpent = (Date.now() - startTime) / 1000
@@ -183,9 +197,18 @@ export function TypingTest({ onStateChange, level = 1, onTestComplete }: TypingT
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newText = e.target.value
+    const lastChar = newText[newText.length - 1]
+    const expectedChar = currentText[newText.length - 1]
+
+    // Only play error sound for incorrect keystrokes
+    if (lastChar !== undefined && lastChar !== expectedChar) {
+      playSound('error', soundSettings)
+    }
+
     setInputText(newText)
 
     if (newText === currentText) {
+      playSound('complete', soundSettings)
       handleTestComplete()
     }
   }
